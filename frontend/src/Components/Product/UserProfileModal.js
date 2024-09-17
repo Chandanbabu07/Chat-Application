@@ -13,31 +13,29 @@ import {
   Text,
   Image,
 } from "@chakra-ui/react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setShowSelectedUserInfo } from "../../reduxdata/reduxstore/reduxslice";
 
-const ProfileModal = ({
-  user,
-  children,
-  showProfileModle,
-  setShowProfileModle,
-}) => {
+const UserProfileModal = ({ user, children }) => {
   // const { isOpen, onOpen, onClose } = useDisclosure();
+  const dispatch = useDispatch();
+  const { userInfo, selectedChat, showSelectedUserInfo } = useSelector(
+    (state) => state.appScene
+  );
 
-  const { userInfo } = useSelector((state) => state.appScene);
-
-  console.log("ProfileModal", userInfo && userInfo);
+  console.log("selectedChat", selectedChat);
 
   return (
     <>
       {/* {children ? (
-        <span onClick={onOpen}>{children}</span>
-      ) : (
-        <IconButton d={{ base: "flex" }} icon={<ViewIcon />} onClick={onOpen} />
-      )} */}
+          <span onClick={onOpen}>{children}</span>
+        ) : (
+          <IconButton d={{ base: "flex" }} icon={<ViewIcon />} onClick={onOpen} />
+        )} */}
       <Modal
         size="lg"
-        onClose={() => setShowProfileModle(false)}
-        isOpen={showProfileModle}
+        onClose={() => dispatch(setShowSelectedUserInfo(false))}
+        isOpen={showSelectedUserInfo}
         isCentered
       >
         <ModalOverlay />
@@ -48,7 +46,7 @@ const ProfileModal = ({
             display="flex"
             justifyContent="center"
           >
-            {userInfo && userInfo.userInfo?.name}
+            {selectedChat.users[1].name}
           </ModalHeader>
 
           <ModalCloseButton />
@@ -61,18 +59,20 @@ const ProfileModal = ({
             <Image
               borderRadius="full"
               boxSize="150px"
-              src={userInfo && userInfo.userInfo?.pic}
-              alt={userInfo && userInfo.userInfo?.name}
+              src={selectedChat.users[1].pic}
+              alt={selectedChat.users[1].pic}
             />
             <Text
               fontSize={{ base: "28px", md: "30px" }}
               fontFamily="Work sans"
             >
-              Email: {userInfo && userInfo.userInfo?.email}
+              Email: {selectedChat.users[1].email}
             </Text>
           </ModalBody>
           <ModalFooter>
-            <Button onClick={() => setShowProfileModle(false)}>Close</Button>
+            <Button onClick={() => dispatch(setShowSelectedUserInfo(false))}>
+              Close
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -80,4 +80,4 @@ const ProfileModal = ({
   );
 };
 
-export default ProfileModal;
+export default UserProfileModal;

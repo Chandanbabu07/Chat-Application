@@ -128,7 +128,7 @@ export const accessChats = createAsyncThunk(
 
 export const getUserChat = createAsyncThunk(
   "appScene/getUserChat",
-  async ({ token: token }) => {
+  async ({ token: token }, { dispatch }) => {
     // Notice _ is used as we are not using any payload in this case
     // const state = getState();
     // const token = state.appScene.userInfo.token; // Assuming userInfo contains the token
@@ -142,6 +142,8 @@ export const getUserChat = createAsyncThunk(
         },
       });
       console.log("response.data", response.data);
+      // dispatch(setSelectedChat(response.data.payload));
+
       return response.data;
     } catch (error) {
       console.error("Error fetching chat data:", error);
@@ -178,11 +180,130 @@ export const createGroupChat = createAsyncThunk(
   }
 );
 
+export const getPerticularChat = createAsyncThunk(
+  "appScene/getPerticularChat",
+  async ({ chatId: chatId, token: token }) => {
+    // Notice _ is used as we are not using any payload in this case
+    // const state = getState();
+    // const token = state.appScene.userInfo.token; // Assuming userInfo contains the token
+    // console.log("Token", token);
+
+    try {
+      const response = await axios.get(`/api/chat?chatId=${chatId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log("response.data", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching chat data:", error);
+      throw error;
+    }
+  }
+);
+
+export const updateGroupName = createAsyncThunk(
+  "appScene/updateGroupName",
+  async ({
+    chatId: chatId,
+    updatedGroupName: updatedGroupName,
+    token: token,
+  }) => {
+    // Notice _ is used as we are not using any payload in this case
+    // const state = getState();
+    // const token = state.appScene.userInfo.token; // Assuming userInfo contains the token
+    // console.log("Token", token);
+
+    try {
+      const response = await axios.put(
+        `/api/chat/renameGroup`,
+        {
+          chatId: chatId,
+          updatedGroupName: updatedGroupName,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("response.data", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching chat data:", error);
+      throw error;
+    }
+  }
+);
+
+export const updateGroupUsers = createAsyncThunk(
+  "appScene/updateGroupUsers",
+  async ({ chatId: chatId, userId: userId, token: token }) => {
+    // Notice _ is used as we are not using any payload in this case
+    // const state = getState();
+    // const token = state.appScene.userInfo.token; // Assuming userInfo contains the token
+    // console.log("Token", token);
+
+    try {
+      const response = await axios.put(
+        `/api/chat/addUsers`,
+        {
+          chatId: chatId,
+          userId: userId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("response.data", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching chat data:", error);
+      throw error;
+    }
+  }
+);
+
+export const removeUserFromGroup = createAsyncThunk(
+  "appScene/removeUserFromGroup",
+  async ({ chatId: chatId, userId: userId, token: token }) => {
+    try {
+      const response = await axios.put(
+        `/api/chat/removeUsers`,
+        {
+          chatId: chatId,
+          userId: userId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("response.data", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching chat data:", error);
+      throw error;
+    }
+  }
+);
+
 const initialState = {
   userInfo: null,
   searchedUsers: [],
   selectedChat: null,
   userChats: [],
+  showGroupModal: false,
+  groupModalLogic: false,
+  showSelectedUserInfo: false,
 };
 
 const reduxSlice = createSlice({
@@ -198,6 +319,15 @@ const reduxSlice = createSlice({
     setUserChats: (state, action) => {
       state.userChats = action.payload;
     },
+    setShowGroupModal: (state, action) => {
+      state.showGroupModal = action.payload;
+    },
+    setGroupModalLogic: (state, action) => {
+      state.groupModalLogic = action.payload;
+    },
+    setShowSelectedUserInfo: (state, action) => {
+      state.showSelectedUserInfo = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchSearchedUsers.fulfilled, (state, action) => {
@@ -212,7 +342,13 @@ const reduxSlice = createSlice({
   },
 });
 
-export const { setUserInfo, setSelectedChat, setUserChats } =
-  reduxSlice.actions;
+export const {
+  setUserInfo,
+  setSelectedChat,
+  setUserChats,
+  setShowGroupModal,
+  setGroupModalLogic,
+  setShowSelectedUserInfo,
+} = reduxSlice.actions;
 
 export default reduxSlice.reducer;

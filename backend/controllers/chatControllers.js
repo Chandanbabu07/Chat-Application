@@ -76,6 +76,33 @@ const fetchChats = asyncHandler(async (req, res) => {
   }
 });
 
+const fetchPerticularChat = asyncHandler(async (req, res) => {
+  const chatId = req.query.chatId;
+  console.log("chatId", chatId);
+  console.log("userId", req.user.id);
+
+  try {
+    let chats = await Chat.find({
+      $and: [{ users: { $elemMatch: { $eq: req.user.id } } }, { _id: chatId }],
+    })
+      .sort({ updatedAt: -1 })
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password")
+      .populate("latestMessage");
+
+    // Populate latestMessage.sender
+    chats = await User.populate(chats, {
+      path: "latestMessage.sender",
+      select: "name pic email",
+    });
+
+    res.status(200).send(chats);
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message);
+  }
+});
+
 const createGroupChat = asyncHandler(async (req, res) => {
   console.log(req.body.name, req.body.users);
 
@@ -193,4 +220,5 @@ module.exports = {
   renameGroup,
   addUsers,
   removeUsers,
+  fetchPerticularChat,
 };

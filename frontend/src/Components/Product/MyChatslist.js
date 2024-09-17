@@ -3,20 +3,26 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   getUserChat,
   setSelectedChat,
+  setShowGroupModal,
 } from "../../reduxdata/reduxstore/reduxslice";
 import { Box, Button, Stack, Text, useToast } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import ChatLoading from "./ChatLoading";
 import { getSender } from "../../Config/ChatLogics";
 import GroupModal from "./GroupModal";
+import UserProfileModal from "./UserProfileModal";
 
 const MyChatslist = () => {
   const dispatch = useDispatch();
   const [loggedUser, setLoggedUser] = useState();
-  const [showGroupModal, setShowGroupModal] = useState(false);
-  const { userInfo, selectedChat, userChats } = useSelector(
-    (state) => state.appScene
-  );
+  // const [showGroupModal, setShowGroupModal] = useState(false);
+  const {
+    userInfo,
+    selectedChat,
+    userChats,
+    showGroupModal,
+    showSelectedUserInfo,
+  } = useSelector((state) => state.appScene);
   const toast = useToast();
 
   console.log("userChats", userChats);
@@ -78,7 +84,7 @@ const MyChatslist = () => {
             display="flex"
             fontSize={{ base: "17px", md: "10px", lg: "17px" }}
             rightIcon={<AddIcon />}
-            onClick={() => setShowGroupModal(true)}
+            onClick={() => dispatch(setShowGroupModal(true))}
           >
             New Group Chat
           </Button>
@@ -131,10 +137,12 @@ const MyChatslist = () => {
 
       {showGroupModal && (
         <GroupModal
-          setShowGroupModal={setShowGroupModal}
-          showGroupModal={showGroupModal}
+        // setShowGroupModal={setShowGroupModal}
+        // showGroupModal={showGroupModal}
         ></GroupModal>
       )}
+
+      {showSelectedUserInfo && <UserProfileModal></UserProfileModal>}
     </>
   );
 };
