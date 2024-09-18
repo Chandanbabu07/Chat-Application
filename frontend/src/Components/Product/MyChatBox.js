@@ -42,23 +42,37 @@ const MyChatBox = () => {
         borderWidth="1px"
       >
         {selectedChat ? (
-          <Box display="flex" justifyContent="space-between" width="100%">
-            <IconButton
-              display={{ base: "flex", md: "none" }}
-              icon={<ArrowBackIcon />}
-              onClick={() => handleBack()}
-            />
-            <Text>
-              {selectedChat.isGroupChat
-                ? selectedChat.chatName
-                : selectedChat.users[1].name}
-            </Text>
-            <IconButton
+          <>
+            <Box display="flex" justifyContent="space-between" width="100%">
+              <IconButton
+                display={{ base: "flex", md: "none" }}
+                icon={<ArrowBackIcon />}
+                onClick={() => handleBack()}
+              />
+              <Text>
+                {selectedChat.isGroupChat
+                  ? selectedChat.chatName
+                  : selectedChat.users[1].name}
+              </Text>
+              <IconButton
+                display="flex"
+                icon={<ViewIcon />}
+                onClick={() => handleGroupModalLogic()}
+              />
+            </Box>
+
+            <Box
               display="flex"
-              icon={<ViewIcon />}
-              onClick={() => handleGroupModalLogic()}
-            />
-          </Box>
+              flexDir="column"
+              justifyContent="flex-end"
+              p={3}
+              bg="#E8E8E8"
+              w="100%"
+              h="100%"
+              borderRadius="lg"
+              overflowY="hidden"
+            ></Box>
+          </>
         ) : (
           <Text fontSize="30px">Click on a user to start chatting</Text>
         )}
