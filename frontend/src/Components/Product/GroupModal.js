@@ -17,6 +17,7 @@ import React, { useEffect, useState } from "react";
 import UserListItem from "./UserListItem";
 import {
   createGroupChat,
+  fetchAllMessages,
   fetchSearchedUsers,
   getUserChat,
   removeUserFromGroup,
@@ -150,6 +151,10 @@ const GroupModal = () => {
             console.log("Result", result.payload);
             dispatch(setSelectedChat(result.payload));
             dispatch(getUserChat({ token: userInfo.token }));
+            fetchAllMessages({
+              chatId: selectedChat._id,
+              token: userInfo.token,
+            });
           }
         });
       }
@@ -215,6 +220,7 @@ const GroupModal = () => {
           console.log("Result", result.payload);
           dispatch(setSelectedChat(result.payload));
           dispatch(getUserChat({ token: userInfo.token }));
+          fetchAllMessages({ chatId: selectedChat._id, token: userInfo.token });
           handleClose();
         }
       });

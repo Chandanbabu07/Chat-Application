@@ -46,7 +46,12 @@ const UserProfileModal = ({ user, children }) => {
             display="flex"
             justifyContent="center"
           >
-            {selectedChat.users[1].name}
+            {selectedChat.isGroupChat
+              ? selectedChat.chatName
+              : selectedChat.users
+                  .filter((item) => item._id !== userInfo.userInfo._id)
+                  .map((user) => user.name) // Render the name of the user
+                  .join(", ")}{" "}
           </ModalHeader>
 
           <ModalCloseButton />
@@ -59,14 +64,34 @@ const UserProfileModal = ({ user, children }) => {
             <Image
               borderRadius="full"
               boxSize="150px"
-              src={selectedChat.users[1].pic}
-              alt={selectedChat.users[1].pic}
+              src={
+                selectedChat.isGroupChat
+                  ? selectedChat.chatName
+                  : selectedChat.users
+                      .filter((item) => item._id !== userInfo.userInfo._id)
+                      .map((user) => user.pic) // Render the name of the user
+                      .join(", ")
+              }
+              alt={
+                selectedChat.isGroupChat
+                  ? selectedChat.chatName
+                  : selectedChat.users
+                      .filter((item) => item._id !== userInfo.userInfo._id)
+                      .map((user) => user.pic) // Render the name of the user
+                      .join(", ")
+              }
             />
             <Text
               fontSize={{ base: "28px", md: "30px" }}
               fontFamily="Work sans"
             >
-              Email: {selectedChat.users[1].email}
+              Email:{" "}
+              {selectedChat.isGroupChat
+                ? selectedChat.chatName
+                : selectedChat.users
+                    .filter((item) => item._id !== userInfo.userInfo._id)
+                    .map((user) => user.email) // Render the name of the user
+                    .join(", ")}
             </Text>
           </ModalBody>
           <ModalFooter>

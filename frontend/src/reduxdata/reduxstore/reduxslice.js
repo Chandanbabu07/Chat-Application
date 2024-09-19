@@ -288,6 +288,55 @@ export const removeUserFromGroup = createAsyncThunk(
         }
       );
       console.log("response.data", response.data);
+
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching chat data:", error);
+      throw error;
+    }
+  }
+);
+
+export const sendMessage = createAsyncThunk(
+  "appScene/sendMessage",
+  async ({ chatId: chatId, content: content, token: token }) => {
+    try {
+      const response = await axios.post(
+        `/api/message`,
+        {
+          chatId: chatId,
+          content: content,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("response", response);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching chat data:", error);
+      throw error;
+    }
+  }
+);
+
+export const fetchAllMessages = createAsyncThunk(
+  "appScene/fetchAllMessages",
+  async ({ chatId: chatId, token: token }, { dispatch }) => {
+    try {
+      dispatch(setMessageLoading(true));
+      const response = await axios.get(`/api/message/${chatId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response);
+      dispatch(setMessageLoading(false));
       return response.data;
     } catch (error) {
       console.error("Error fetching chat data:", error);
@@ -304,6 +353,7 @@ const initialState = {
   showGroupModal: false,
   groupModalLogic: false,
   showSelectedUserInfo: false,
+  messageLoading: false,
 };
 
 const reduxSlice = createSlice({
@@ -328,6 +378,9 @@ const reduxSlice = createSlice({
     setShowSelectedUserInfo: (state, action) => {
       state.showSelectedUserInfo = action.payload;
     },
+    setMessageLoading: (state, action) => {
+      state.messageLoading = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchSearchedUsers.fulfilled, (state, action) => {
@@ -349,6 +402,7 @@ export const {
   setShowGroupModal,
   setGroupModalLogic,
   setShowSelectedUserInfo,
+  setMessageLoading,
 } = reduxSlice.actions;
 
 export default reduxSlice.reducer;
