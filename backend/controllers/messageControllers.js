@@ -6,9 +6,6 @@ const User = require("../models/userModel");
 const sendMessage = asyncHandler(async (req, res) => {
   const { chatId, content } = req.body;
 
-  console.log("chatId", chatId);
-  console.log("content", content);
-
   if (!chatId || !content) {
     res.status(400);
     throw new Error("Req Query Missing ");
@@ -43,14 +40,10 @@ const sendMessage = asyncHandler(async (req, res) => {
 });
 
 const fetchAllMessage = asyncHandler(async (req, res) => {
-  console.log("chatId", req.params.chatId);
-
   try {
     const messages = await Message.find({ chat: req.params.chatId })
       .populate("sender", "name pic email")
       .populate("chat");
-
-    console.log("allMessages", messages);
 
     res.status(200).json(messages);
   } catch (error) {

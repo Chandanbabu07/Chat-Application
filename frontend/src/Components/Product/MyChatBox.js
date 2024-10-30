@@ -20,6 +20,10 @@ import {
   setShowSelectedUserInfo,
 } from "../../reduxdata/reduxstore/reduxslice";
 import UsersMessagesBlock from "./UsersMessagesBlock";
+import io from "socket.io-client";
+
+const ENDPOINT = "http://localhost:3000";
+var socket, selectedChatCompare;
 
 const MyChatBox = () => {
   const { selectedChat, userInfo, messageLoading } = useSelector(
@@ -27,8 +31,17 @@ const MyChatBox = () => {
   );
   const [newMessage, setNewMessage] = useState();
   const [chatAllMessages, setChatAllMessages] = useState(null);
+  const [socketConnected, setSocketConnected] = useState(false);
   // const [isloading, setIsLoading] = useState(false);
   console.log("chatAllMessages", chatAllMessages);
+
+  useEffect(() => {
+    if (userInfo) {
+      socket = io(ENDPOINT);
+      socket.emit("setup", userInfo?.userInfo);
+      socket.on("connection", () => setSocketConnected(true));
+    }
+  }, [userInfo]);
 
   const dispatch = useDispatch();
 
@@ -60,9 +73,9 @@ const MyChatBox = () => {
           })
         ).then((result) => {
           console.log("result", result);
+          socket.emit("newmessage", result.payload);
           if (result.meta.requestStatus === "fulfilled") {
             setNewMessage("");
-
             dispatch(
               fetchAllMessages({
                 chatId: selectedChat._id,
@@ -71,6 +84,7 @@ const MyChatBox = () => {
             ).then((result) => {
               console.log("setChatAllMessages", result.payload);
               setChatAllMessages(result.payload);
+              socket.emit("joinchat", selectedChat);
             });
 
             dispatch(getUserChat({ token: userInfo.token }));
@@ -84,6 +98,22 @@ const MyChatBox = () => {
   };
 
   useEffect(() => {
+    // if (socket && selectedChatCompare) {
+    socket?.on("message recieved", (newMessageRecevied) => {
+      console.log("newMessageRecevied", newMessageRecevied);
+      if (
+        !selectedChatCompare ||
+        selectedChatCompare.id !== newMessageRecevied._id
+      ) {
+      } else {
+        alert("jnfrjn");
+        setChatAllMessages([...chatAllMessages, newMessageRecevied]);
+      }
+    });
+    // }
+  }, []);
+
+  useEffect(() => {
     if (selectedChat) {
       console.log("selectedChat", selectedChat);
       dispatch(
@@ -91,7 +121,10 @@ const MyChatBox = () => {
       ).then((result) => {
         console.log("setChatAllMessages", result.payload);
         setChatAllMessages(result.payload);
+        socket.emit("joinchat", selectedChat);
       });
+
+      selectedChatCompare = selectedChat;
     }
   }, [selectedChat]);
 

@@ -1,7 +1,8 @@
 .App {
   min-height: 100vh;
   display: flex;
-  background-image: url("../src/Components/Images/chat-wallpaper-social-media-message-background-copy-space-for-a-text-vector.jpg");
-  background-size: cover;
+  background-color: gray;
+  /* background-image: url("../src/Components/Images/chat-wallpaper-social-media-message-background-copy-space-for-a-text-vector.jpg");
+  background-size: cover; */
   /* background-position: center; */
 }

@@ -71,13 +71,13 @@ const usersList = asyncHandler(async (req, res) => {
 
   res.send(users);
 
-  console.log(keyword);
+  // console.log(keyword);
 });
 
 const fetchUserInfo = asyncHandler(async (req, res) => {
   const userId = req.query.userId;
 
-  console.log("userId", userId);
+  // console.log("userId", userId);
   // Fetch user information
   const userInfo = await User.findOne({ _id: userId });
 

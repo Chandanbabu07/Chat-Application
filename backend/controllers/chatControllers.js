@@ -6,7 +6,6 @@ const { json } = require("express");
 const accessChats = asyncHandler(async (req, res) => {
   const { userId } = req.body;
 
-  console.log("userIds", userId, req.user.id);
 
   if (!userId) {
     console.log("User Id Not Found");
@@ -61,7 +60,7 @@ const fetchChats = asyncHandler(async (req, res) => {
       .populate("users", "-password")
       .populate("groupAdmin", "-password")
       .populate("latestMessage"); // Ensure sorting happens here
-    console.log(chats);
+    // console.log(chats);
 
     // Populate latestMessage.sender
     chats = await User.populate(chats, {
@@ -78,8 +77,8 @@ const fetchChats = asyncHandler(async (req, res) => {
 
 const fetchPerticularChat = asyncHandler(async (req, res) => {
   const chatId = req.query.chatId;
-  console.log("chatId", chatId);
-  console.log("userId", req.user.id);
+  // console.log("chatId", chatId);
+  // console.log("userId", req.user.id);
 
   try {
     let chats = await Chat.find({
@@ -104,13 +103,11 @@ const fetchPerticularChat = asyncHandler(async (req, res) => {
 });
 
 const createGroupChat = asyncHandler(async (req, res) => {
-  console.log(req.body.name, req.body.users);
-
   if (!req.body.name || !req.body.users) {
     return res.status(400).send({ message: "Please fill all the fields" });
   }
 
-  console.log(req.body.name, req.body.users);
+  // console.log(req.body.name, req.body.users);
 
   var users = JSON.parse(req.body.users);
 
@@ -119,7 +116,6 @@ const createGroupChat = asyncHandler(async (req, res) => {
   }
 
   users.push(req.user);
-  console.log("users", users);
 
   try {
     const groupChat = await Chat.create({
@@ -129,12 +125,9 @@ const createGroupChat = asyncHandler(async (req, res) => {
       groupAdmin: req.user,
     });
 
-    console.log("groupChat", groupChat);
-
     const fullGroupChat = await Chat.findOne({ _id: groupChat._id })
       .populate("users", "-password")
       .populate("groupAdmin", "-password");
-    console.log("fullGroupChat", fullGroupChat);
 
     res.status(200).json(fullGroupChat);
   } catch (error) {

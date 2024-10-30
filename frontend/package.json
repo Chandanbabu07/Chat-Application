@@ -13,6 +13,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.7.5",
+    "client": "^0.0.1",
     "framer-motion": "^11.3.31",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -21,6 +22,8 @@
     "react-scripts": "5.0.1",
     "react-scrollable-feed": "^2.0.2",
     "redux": "^5.0.1",
+    "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
